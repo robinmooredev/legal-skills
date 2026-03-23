@@ -17,6 +17,10 @@ description: >
 
 Every GC has a story about the vendor contract that auto-renewed because someone missed the cancellation window by three days. This skill extracts the dates and obligations that matter after signing — the stuff you need in a spreadsheet with calendar reminders.
 
+## Prerequisites
+
+- **pandoc** (version 2.9+) must be installed. Install via `brew install pandoc` (macOS), `apt install pandoc` (Ubuntu), or from https://pandoc.org/installing.html.
+
 ## Inputs
 
 A signed vendor contract — .docx, markdown, or pasted text.
@@ -107,6 +111,8 @@ Read the entire contract and pull out every date, deadline, and post-signature o
 - Whether fees are refundable upon early termination
 
 ## After extraction
+
+If the user wants the data in spreadsheet format, also produce a CSV or .xlsx file with columns: Field, Value, Section Reference, Action Required, Due Date. Use the **xlsx** skill if available.
 
 Save the output as `[vendor-name]-renewal-tracker.md` and let the user know:
 

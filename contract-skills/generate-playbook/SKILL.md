@@ -19,6 +19,10 @@ Most legal teams have a playbook — it's just not written down. It lives in the
 
 The output follows the **Optimal Playbook Format** (see that skill for the full template spec), so it works seamlessly with the **Review Contract with Playbook** skill.
 
+## Prerequisites
+
+- **pandoc** (version 2.9+) must be installed. Install via `brew install pandoc` (macOS), `apt install pandoc` (Ubuntu), or from https://pandoc.org/installing.html.
+
 ## Inputs
 
 A folder of redlined .docx files — vendor contracts that the user's team has marked up with tracked changes. These are the contracts that show how the team actually negotiates: what they delete, what they insert, what they comment on.
@@ -43,9 +47,19 @@ python3 <redline-to-markdown-skill-path>/scripts/convert_spans.py "<input_file>"
 
 Do this for every file in the folder. Keep track of which changes came from which contract — you'll want to know whether a pattern shows up in 2 contracts or 10.
 
+After converting each file, check whether any tracked changes were found. If a file produces no `<ins>`, `<del>`, or `<comment>` tags, it likely has all changes accepted. Report this to the user:
+
+"[filename] has no pending tracked changes — all changes appear to have been accepted. Skipping this file. If you have the pre-accepted version, that would be more useful."
+
+If *all* files have accepted changes, stop and let the user know before proceeding — there's nothing to extract.
+
 ## Step 2: Analyze the patterns
 
 Read all the extracted redlines and look for recurring behaviors. You're looking for two things:
+
+### Watch for duplicate base agreements
+
+Before counting pattern frequency, check whether multiple files share the same base agreement (identical structure, same vendor, same section numbering). If so, note this in the evidence: "This pattern appeared in 3 redlines of the same Dropbox Services Agreement — treat as a single strong signal rather than 3 independent data points."
 
 ### What the team consistently pushes back on
 
@@ -78,7 +92,15 @@ If the team's redlines surface patterns that don't fit these standard categories
 
 ## Step 3: Build the playbook
 
-For each pattern you identified, create a playbook entry in the Optimal Playbook Format:
+For each pattern you identified, create a playbook entry that conforms exactly to the **Optimal Playbook Format**:
+
+- **`title`**: Short, scannable name (e.g., "Auto Renewal")
+- **`key`**: Machine-readable slug (e.g., `auto_renewal`). Use the standard keys from the Optimal Playbook Format where applicable.
+- **`expected_finding`**: Must be one of `should_be_absent` or `should_be_present` — determine from the pattern direction (team deletes it → should_be_absent; team inserts it → should_be_present)
+- **`instruction_md`**: What to look for, written as a reviewer instruction
+- **`order_form_template_md`**: Actual contract language pulled from the team's `<ins>` tags
+
+Entry template:
 
 ```
 [Entry Title]

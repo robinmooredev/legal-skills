@@ -17,6 +17,8 @@ This skill defines the structure for a vendor contract review playbook. The play
 
 The format is designed so it works seamlessly with the **Review Contract with Playbook** skill, but the output is a document you can hand to a new hire or outside counsel.
 
+A sample playbook is included at `templates/sample-playbook.md` — use it as a reference for structure and content. It contains 3 example entries (Auto Renewal, Vendor AI Training, Data Deletion) across different categories.
+
 ## When to use this
 
 - The user wants to see what a well-structured playbook looks like

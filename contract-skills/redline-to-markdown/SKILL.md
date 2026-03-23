@@ -21,6 +21,11 @@ legal contract review, collaborative editing review, or any workflow where you n
 tracked changes and the reasoning behind them in a plain-text format that's easy to
 read, search, and pipe into other tools.
 
+## Prerequisites
+
+- **pandoc** (version 2.9+) must be installed. Install via `brew install pandoc` (macOS), `apt install pandoc` (Ubuntu), or from https://pandoc.org/installing.html.
+- **Python 3** must be installed (for the `convert_spans.py` post-processing script).
+
 ## How it works
 
 The conversion is a two-step pipeline:

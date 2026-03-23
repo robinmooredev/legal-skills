@@ -17,6 +17,10 @@ This is the core workflow skill. It takes a vendor contract and a review playboo
 
 **Important**: This skill assists with legal analysis workflows but does not provide legal advice. All findings should be reviewed by qualified legal professionals.
 
+## Prerequisites
+
+- **pandoc** (version 2.9+) must be installed. Install via `brew install pandoc` (macOS), `apt install pandoc` (Ubuntu), or from https://pandoc.org/installing.html.
+
 ## Inputs
 
 Two things are needed:
@@ -80,6 +84,15 @@ Read the entire contract before starting the entry-by-entry review. You need the
 - Definitions sections change the meaning of otherwise-innocuous language
 - The order of precedence clause (if any) determines which document wins when they conflict
 - Some provisions are conspicuous by their absence, which you can only assess after reading everything
+
+### Handling URL-referenced terms
+
+Many SaaS contracts incorporate terms by reference to external URLs (DPAs, SLAs, AUPs, etc.). When reviewing:
+
+1. **Note which provisions are URL-referenced** — flag them in the report so the reviewer knows where to find the actual terms.
+2. **If the URL content is accessible** (e.g., publicly available DPA or SLA), fetch and review it as part of the contract.
+3. **If the URL content is not accessible**, mark the relevant entry as 🟡 Review with a note: "This provision is defined in [document name] at [URL], which was not reviewed. Recommend reviewing separately."
+4. **Never assume URL-referenced terms are adequate** — the base agreement may grant broad rights that the URL terms are meant to constrain, but you can't verify without reading both.
 
 ### Step 2: Review each playbook entry
 
@@ -160,7 +173,7 @@ After all entries are reviewed, produce a summary at the top of the report:
 
 ## Step 4: Save and share
 
-Save the report as `[vendor-name]-review.md`.
+Save the report as `[vendor-name]-review.md`. (The playbook itself is a .docx for sharing with the team, but review reports are markdown for readability and tool interoperability.)
 
 Let the user know:
 - This is an AI-assisted analysis, not legal advice — they should review the findings with counsel

@@ -55,6 +55,17 @@ def convert_spans(html: str) -> str:
       <ins author="Name" date="2026-03-01">text</ins>
       <comment author="Name" date="2026-03-01">comment text</comment>
     """
+    # --- Pass 1: Remove structural-only spans before processing content spans ---
+    # comment-end, paragraph-deletion, and paragraph-insertion are markers with no
+    # visible content. Removing them first prevents nested-span mismatches where the
+    # regex for a content span grabs the wrong </span> closer.
+    html = re.sub(
+        r'<span\s+class="(?:comment-end|paragraph-deletion|paragraph-insertion)"[^>]*>\s*</span>',
+        '',
+        html,
+    )
+
+    # --- Pass 2: Convert content spans (insertion, deletion, comment-start) ---
     def replace_span(match):
         full = match.group(0)
 
@@ -70,10 +81,6 @@ def convert_spans(html: str) -> str:
             "deletion": "del",
             "comment-start": "comment",
         }
-
-        if change_type == "comment-end":
-            # Remove comment-end markers entirely — they're just closing anchors
-            return ""
 
         tag = tag_map.get(change_type)
         if not tag:
@@ -99,10 +106,16 @@ def convert_spans(html: str) -> str:
         attr_str = " " + " ".join(attrs) if attrs else ""
         return f"<{tag}{attr_str}>{inner_text}</{tag}>"
 
-    # Match span elements with insertion/deletion/comment-start/comment-end class
-    # Use DOTALL because pandoc sometimes wraps long spans across lines
-    pattern = r'<span\s+class="(?:insertion|deletion|comment-start|comment-end)"[^>]*>.*?</span>'
-    return re.sub(pattern, replace_span, html, flags=re.DOTALL)
+    pattern = r'<span\s+class="(?:insertion|deletion|comment-start)"[^>]*>.*?</span>'
+    converted = re.sub(pattern, replace_span, html, flags=re.DOTALL)
+
+    # --- Pass 3: Cleanup ---
+    # Remove any orphaned </span> tags left from nested span structures
+    converted = re.sub(r'</span>', '', converted)
+    # Remove empty ins/del/comment tags (with or without attributes)
+    converted = re.sub(r'<(ins|del|comment)\b[^>]*>\s*</\1>', '', converted)
+
+    return converted
 
 
 def main():
