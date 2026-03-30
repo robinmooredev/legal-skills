@@ -2,20 +2,21 @@
 name: renewal-tracker
 description: >
   Extract post-signature obligations, renewal dates, and critical deadlines from a
-  signed vendor contract into a structured summary you can drop into a spreadsheet.
-  Use this skill whenever the user mentions "renewal", "auto-renew", "cancel by",
-  "termination date", "when does this contract expire", "renewal tracker", "contract
-  dates", or says things like "when do I need to cancel this", "what are the key
-  dates in this contract", "I don't want to miss the renewal window", "extract the
-  dates from this", "when does this renew", "put the deadlines in a spreadsheet",
-  or "I got burned by an auto-renewal". Also trigger when the user uploads a signed
-  contract and seems focused on dates, deadlines, or post-signature obligations rather
-  than risk review.
+  signed contract into a structured summary you can drop into a spreadsheet. Works
+  with any contract type: vendor agreements, customer contracts, NDAs, leases,
+  contractor agreements, etc. Use this skill whenever the user mentions "renewal",
+  "auto-renew", "cancel by", "termination date", "when does this contract expire",
+  "renewal tracker", "contract dates", or says things like "when do I need to cancel
+  this", "what are the key dates in this contract", "I don't want to miss the renewal
+  window", "extract the dates from this", "when does this renew", "put the deadlines
+  in a spreadsheet", or "I got burned by an auto-renewal". Also trigger when the user
+  uploads a signed contract and seems focused on dates, deadlines, or post-signature
+  obligations rather than risk review.
 ---
 
 # Renewal Tracker
 
-Every GC has a story about the vendor contract that auto-renewed because someone missed the cancellation window by three days. This skill extracts the dates and obligations that matter after signing — the stuff you need in a spreadsheet with calendar reminders.
+Every GC has a story about the contract that auto-renewed because someone missed the cancellation window by three days. This skill extracts the dates and obligations that matter after signing — the stuff you need in a spreadsheet with calendar reminders.
 
 ## Prerequisites
 
@@ -23,7 +24,7 @@ Every GC has a story about the vendor contract that auto-renewed because someone
 
 ## Inputs
 
-A signed vendor contract — .docx, markdown, or pasted text.
+A signed contract — .docx, markdown, or pasted text. Can be a vendor agreement, customer contract, NDA, lease, contractor agreement, or any other agreement with dates and obligations.
 
 If the user uploads a .docx, convert it inline:
 
@@ -40,7 +41,7 @@ Read the entire contract and pull out every date, deadline, and post-signature o
 ### Output format
 
 ```markdown
-# Renewal Tracker: [Vendor Name]
+# Renewal Tracker: [Counterparty Name]
 
 **Contract:** [document description]
 **Extracted:** [today's date]
@@ -50,12 +51,12 @@ Read the entire contract and pull out every date, deadline, and post-signature o
 
 | Field | Value |
 |---|---|
-| **Vendor** | [Vendor legal name as it appears in the contract] |
+| **Counterparty** | [Legal name as it appears in the contract] |
 | **Contract start** | [date, or "not specified" if the effective date isn't stated] |
 | **Current term ends** | [date or description, e.g., "12 months from Effective Date"] |
 | **Auto-renews** | Yes / No — for [renewal period, e.g., "successive 1-year terms"] |
 | **Cancel by** | [date or formula, e.g., "60 days before renewal"] — ⚠️ [calendar date if computable] |
-| **Price escalation** | Capped / Uncapped — [details, e.g., "up to 5% annually" or "at Vendor's discretion"] |
+| **Price escalation** | Capped / Uncapped / N/A — [details, e.g., "up to 5% annually" or "at counterparty's discretion"] |
 | **Termination for convenience** | Yes / No — [notice period, e.g., "90 days written notice"] |
 | **Post-termination data export** | [window, e.g., "30 days after termination" or "not specified"] |
 | **Post-termination data deletion** | [obligation, e.g., "within 60 days of written request" or "not specified"] |
@@ -76,10 +77,10 @@ Read the entire contract and pull out every date, deadline, and post-signature o
 [Anything else the contract requires after signing that isn't a date. Examples:]
 
 - **Insurance requirements:** Customer must maintain $X in [type] coverage per Section Y.
-- **Audit rights:** Vendor may audit Customer's usage [frequency] per Section Y.
+- **Audit rights:** Counterparty may audit usage [frequency] per Section Y.
 - **Compliance certifications:** Customer must provide [certification] annually per Section Y.
 - **Usage restrictions:** [Any material restrictions on how the product can be used]
-- **Reporting obligations:** [Anything the customer must report to the vendor]
+- **Reporting obligations:** [Anything one party must report to the other]
 
 [If none: "No additional post-signature obligations found beyond standard use terms."]
 ```
@@ -95,13 +96,14 @@ Read the entire contract and pull out every date, deadline, and post-signature o
 ### Price escalation
 
 - **Capped** means there's a contractual limit on price increases (percentage cap, CPI index, etc.)
-- **Uncapped** means the vendor can raise prices at their discretion, or the contract is silent on renewal pricing
-- If the contract says "then-current pricing" or "Vendor's standard rates" at renewal — that's uncapped
+- **Uncapped** means the counterparty can raise prices at their discretion, or the contract is silent on renewal pricing
+- If the contract says "then-current pricing" or "standard rates" at renewal — that's uncapped
+- **N/A** for contracts without a pricing component (e.g., NDAs, some partnership agreements)
 
 ### Data obligations
 
 - **Export window:** How long the customer has to request data export after termination. If not specified, say so — this is a common gap.
-- **Deletion:** Whether the vendor commits to deleting customer data after termination, and on what timeline. If not specified, note it.
+- **Deletion:** Whether the counterparty commits to deleting data after termination, and on what timeline. If not specified, note it. May not apply to all contract types.
 
 ### Payment
 
@@ -114,7 +116,7 @@ Read the entire contract and pull out every date, deadline, and post-signature o
 
 If the user wants the data in spreadsheet format, also produce a CSV or .xlsx file with columns: Field, Value, Section Reference, Action Required, Due Date. Use the **xlsx** skill if available.
 
-Save the output as `[vendor-name]-renewal-tracker.md` and let the user know:
+Save the output as `[counterparty-name]-renewal-tracker.md` and let the user know:
 
 - They should verify all dates against the original contract (AI extraction is good but not infallible on dates)
 - The "Key dates to calendar" section is designed to be turned into calendar reminders

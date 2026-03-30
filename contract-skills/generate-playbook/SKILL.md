@@ -1,16 +1,17 @@
 ---
 name: generate-playbook
 description: >
-  Generate a vendor contract review playbook by analyzing a folder of redlined .docx
+  Generate a contract review playbook by analyzing a folder of redlined .docx
   files — contracts your team has already marked up, negotiated, or responded to.
-  The skill reverse-engineers your team's actual review patterns into a structured
-  playbook. Use this skill whenever the user wants to create a playbook, mentions
-  "playbook", "review criteria", "generate playbook from our contracts", "build a
-  playbook", or says things like "I have a bunch of marked-up contracts", "here are
-  our redlines", "figure out what we care about from our past negotiations", "turn
-  our redlines into a playbook", or "we need to document our review process". Also
-  trigger when the user uploads multiple .docx files with tracked changes and wants
-  to extract patterns from them.
+  Works with any contract type: vendor agreements, NDAs, contractor agreements,
+  customer contracts, etc. The skill reverse-engineers your team's actual review
+  patterns into a structured playbook. Use this skill whenever the user wants to
+  create a playbook, mentions "playbook", "review criteria", "generate playbook
+  from our contracts", "build a playbook", or says things like "I have a bunch of
+  marked-up contracts", "here are our redlines", "figure out what we care about
+  from our past negotiations", "turn our redlines into a playbook", or "we need to
+  document our review process". Also trigger when the user uploads multiple .docx
+  files with tracked changes and wants to extract patterns from them.
 ---
 
 # Generate Playbook
@@ -25,7 +26,7 @@ The output follows the **Optimal Playbook Format** (see that skill for the full 
 
 ## Inputs
 
-A folder of redlined .docx files — vendor contracts that the user's team has marked up with tracked changes. These are the contracts that show how the team actually negotiates: what they delete, what they insert, what they comment on.
+A folder of redlined .docx files — contracts the user's team has marked up with tracked changes. These can be vendor agreements, NDAs, contractor agreements, customer contracts, or any other agreement type. They show how the team actually negotiates: what they delete, what they insert, what they comment on.
 
 More files = better playbook. 3-5 contracts will produce a usable playbook. 10+ will surface the team's patterns reliably.
 
@@ -59,7 +60,7 @@ Read all the extracted redlines and look for recurring behaviors. You're looking
 
 ### Watch for duplicate base agreements
 
-Before counting pattern frequency, check whether multiple files share the same base agreement (identical structure, same vendor, same section numbering). If so, note this in the evidence: "This pattern appeared in 3 redlines of the same Dropbox Services Agreement — treat as a single strong signal rather than 3 independent data points."
+Before counting pattern frequency, check whether multiple files share the same base agreement (identical structure, same counterparty, same section numbering). If so, note this in the evidence: "This pattern appeared in 3 redlines of the same base agreement — treat as a single strong signal rather than 3 independent data points."
 
 ### What the team consistently pushes back on
 
@@ -76,29 +77,21 @@ These become **pass criteria**. Look for:
 - Sections with no tracked changes across multiple contracts — the team reads these and moves on
 - Provisions that appear in comments with approval language ("this is fine", "standard", "acceptable")
 
-### Pattern categories
+### Organizing the patterns
 
-Map each pattern to one of the 7 standard playbook categories and their 18 standard entries:
+Group the patterns you find into logical categories that reflect the team's actual concerns. Common groupings might be around term and renewal, data and privacy, liability, security — but let the patterns drive the structure. If the team's redlines cluster around a topic (e.g., they consistently push back on AI training clauses), that becomes its own entry regardless of whether it fits a pre-existing category.
 
-**Term & Renewal:** Auto Renewal, Price Escalation, Termination for Convenience
-**Contract Governance:** Unilateral Contract Modifications, MSA Precedence over Order Form, Anything Else Unusual
-**Data Protection & Privacy:** Data Protection Addendum / Regulatory Compliance, Permitted Data Use Scope, Use of Customer Data for AI Training, Use of Anonymized / Aggregated Data
-**Data Lifecycle:** Subprocessor Controls, Customer Data Export Rights, Data Deletion Obligations
-**Security & Availability:** Security Standards, Uptime SLA and Service Credits
-**Liability & IP:** Liability Cap Adequacy, IP Infringement Indemnification
-**Commercial Terms:** Customer Logo / Trademark Use
-
-If the team's redlines surface patterns that don't fit these standard categories, create new entries or new categories. The standard categories are a starting point, not a ceiling.
+Don't force patterns into a fixed taxonomy. The playbook should reflect how this team thinks about risk, not a generic checklist.
 
 ## Step 3: Build the playbook
 
 For each pattern you identified, create a playbook entry that conforms exactly to the **Optimal Playbook Format**:
 
 - **`title`**: Short, scannable name (e.g., "Auto Renewal")
-- **`key`**: Machine-readable slug (e.g., `auto_renewal`). Use the standard keys from the Optimal Playbook Format where applicable.
+- **`key`**: Machine-readable slug (e.g., `auto_renewal`).
 - **`expected_finding`**: Must be one of `should_be_absent` or `should_be_present` — determine from the pattern direction (team deletes it → should_be_absent; team inserts it → should_be_present)
 - **`instruction_md`**: What to look for, written as a reviewer instruction
-- **`order_form_template_md`**: Actual contract language pulled from the team's `<ins>` tags
+- **`suggested_language_md`**: Actual contract language pulled from the team's `<ins>` tags
 
 Entry template:
 
@@ -110,13 +103,13 @@ Expected: [should_be_absent | should_be_present]
 What to look for:
 [Derived from what the team flags across contracts. Write it as a reviewer instruction.]
 
-Order form language:
+Suggested language:
 [Derived from the team's actual insertion language. Use the most common or most recent version if it varies across contracts. This is real language your team has already used in negotiations — not generic boilerplate.]
 ```
 
 - **`expected_finding`**: Determine from the pattern — if the team consistently *deletes* a provision (e.g., strikes auto-renewal clauses), that's `should_be_absent`. If the team consistently *inserts* a provision (e.g., adds data deletion obligations), that's `should_be_present`.
 - **`instruction_md`**: Synthesize from the team's comments and the types of clauses they flag. What should a reviewer scan for?
-- **`order_form_template_md`**: Pull directly from the team's `<ins>` tags — their actual negotiation language.
+- **`suggested_language_md`**: Pull directly from the team's `<ins>` tags — their actual negotiation language.
 
 ### Sourcing the remediation language
 
@@ -137,9 +130,11 @@ For each entry, note how strong the evidence is:
 
 ### Gap analysis
 
-After building entries from the redlines, check which of the 18 standard categories have *no evidence* in the team's redlines. These are potential gaps — areas the team may not be reviewing. Flag them:
+After building entries from the redlines, consider whether there are common contract risk areas that the team's redlines don't cover at all. For example, if the team has never flagged anything related to data handling, liability, or termination rights, that could be a gap worth raising:
 
-"Your redlines don't show any tracked changes related to [category]. This could mean your vendors' contracts are consistently fine on this point, or it could mean it's not being checked. Worth a quick review with the team."
+"Your redlines don't show any tracked changes related to [topic]. This could mean your contracts are consistently fine on this point, or it could mean it's not being checked. Worth a quick review with the team."
+
+Don't impose a fixed checklist — just note areas where the absence of patterns is itself interesting.
 
 ## Step 4: Present and iterate
 
@@ -150,7 +145,7 @@ Output the complete playbook. For each entry, include:
 
 Then ask:
 
-1. "Does this match how your team actually thinks about vendor risk? Anything I misread from the redlines?"
+1. "Does this match how your team actually thinks about these contracts? Anything I misread from the redlines?"
 2. "I flagged [N] gaps where your redlines didn't show any patterns. Are those intentional, or areas to add criteria for?"
 3. "The remediation language is pulled from your actual negotiations. Want me to standardize any of it?"
 
@@ -165,20 +160,20 @@ The document should include:
 - Table of contents
 - Brief introduction (what this playbook is, how it was generated, how to use it)
 - Each entry as its own section with the five fields clearly laid out
-- A gap analysis appendix noting which standard categories had no evidence in the redlines
+- A gap analysis appendix noting areas where the redlines showed no patterns
 
 Save as `[company-name]-playbook.docx` and let the user know:
 
-- They can use this playbook with the **Review Contract with Playbook** skill to review any new vendor contract
+- They can use this playbook with the **Review Contract with Playbook** skill to review any new contract
 - They can edit the Word doc anytime their priorities change
 - As they negotiate more contracts, they can re-run this skill with the newer redlines to update the playbook
-- If they want to test it immediately, they can upload a new vendor contract and run a review
+- If they want to test it immediately, they can upload a new contract and run a review
 
 ## Edge cases
 
 - **No tracked changes in a .docx:** The file might have accepted all changes. Note this and skip it — there's nothing to extract.
 - **Mixed authorship:** Multiple reviewers may have different standards. If you can identify reviewers from the `author` attributes on tracked changes, note whose patterns you're capturing. The user may want to weight certain reviewers' patterns over others.
-- **One-sided redlines:** If the files are vendor redlines (not the user's team's redlines), the patterns are reversed — deletions are what the vendor struck from the user's terms. Clarify with the user which direction the redlines go.
+- **One-sided redlines:** If the files are the counterparty's redlines (not the user's team's redlines), the patterns are reversed — deletions are what the counterparty struck from the user's terms. Clarify with the user which direction the redlines go.
 - **Very old contracts:** If the folder spans years, the team's standards may have evolved. Weight recent contracts more heavily and flag where older contracts show different patterns.
 
 ## Tone

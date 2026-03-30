@@ -1,19 +1,21 @@
 ---
 name: review-contract-with-playbook
 description: >
-  Review a vendor contract against a playbook and produce a pass/fail/review report
-  with findings and suggested order form language. Use this skill whenever the user
-  wants to review a contract, uploads a contract and a playbook, mentions "review
-  against playbook", "run the playbook", "check this contract", "contract review",
-  or says things like "review this MSA", "what's wrong with this contract", "run my
-  playbook against this", "check this vendor agreement", or "I need to review a
-  contract before signing". Also trigger when the user uploads a contract file and
-  has previously generated or uploaded a playbook in the conversation.
+  Review a contract against a playbook and produce a pass/fail/review report
+  with findings and suggested redline language. Works with any contract type:
+  vendor agreements, NDAs, contractor agreements, customer contracts, etc.
+  Use this skill whenever the user wants to review a contract, uploads a contract
+  and a playbook, mentions "review against playbook", "run the playbook", "check
+  this contract", "contract review", or says things like "review this MSA",
+  "what's wrong with this contract", "run my playbook against this", "check this
+  vendor agreement", "review this NDA", or "I need to review a contract before
+  signing". Also trigger when the user uploads a contract file and has previously
+  generated or uploaded a playbook in the conversation.
 ---
 
 # Review Contract with Playbook
 
-This is the core workflow skill. It takes a vendor contract and a review playbook, then produces a structured report assessing every playbook entry against the actual contract language. A 2-hour manual contract review becomes a 10-minute one.
+This is the core workflow skill. It takes a contract and a review playbook, then produces a structured report assessing every playbook entry against the actual contract language. A 2-hour manual contract review becomes a 10-minute one.
 
 **Important**: This skill assists with legal analysis workflows but does not provide legal advice. All findings should be reviewed by qualified legal professionals.
 
@@ -25,7 +27,7 @@ This is the core workflow skill. It takes a vendor contract and a review playboo
 
 Two things are needed:
 
-1. **A vendor contract** — ideally in markdown (output of the Redline-to-Markdown skill), but .docx or pasted text also works
+1. **A contract** — vendor agreement, NDA, contractor agreement, customer contract, or any other agreement type. Ideally in markdown (output of the Redline-to-Markdown skill), but .docx or pasted text also works
 2. **A review playbook** — ideally in the Optimal Playbook Format (output of the Generate Playbook skill), but any structured set of review criteria works
 
 ### If the user uploads a .docx without converting first
@@ -40,30 +42,13 @@ Read the output and proceed with the review. Mention that the **Redline-to-Markd
 
 ### If the user doesn't have a playbook
 
-Ask: "Do you have a playbook or set of review criteria you'd like me to use? If not, I can use a standard set of 18 categories that covers the most common vendor contract issues."
+Ask: "Do you have a playbook or set of review criteria you'd like me to use? If not, I can do a general risk review — tell me what matters most to your team (e.g., data privacy, liability, auto-renewal, pricing) and I'll focus there."
 
-If they say no, use the 18 standard categories with moderate pass/fail thresholds (suitable for a Series B-D company with typical risk tolerance). These are:
+If they don't have specific criteria, do a broad risk scan of the contract and flag anything a reasonable in-house lawyer would want to know about. Organize your findings into logical groups based on what's actually in the contract. Don't apply a fixed checklist — adapt to the contract in front of you.
 
-1. Auto Renewal
-2. Unilateral Contract Modifications
-3. Price Escalation
-4. Use of Customer Data for AI Training
-5. Data Protection Addendum / Regulatory Compliance
-6. Liability Cap Adequacy
-7. IP Infringement Indemnification
-8. Security Standards
-9. Uptime SLA and Service Credits
-10. Subprocessor Controls
-11. Customer Data Export Rights
-12. Data Deletion Obligations
-13. Customer Logo / Trademark Use
-14. MSA Precedence over Order Form
-15. Permitted Data Use Scope
-16. Use of Anonymized / Aggregated Data
-17. Termination for Convenience
-18. Anything Else Unusual
+If they want to build a reusable playbook for future reviews, point them to the **Generate Playbook** skill.
 
-Each entry has an `expected_finding` that determines pass/fail logic:
+Each playbook entry has an `expected_finding` that determines pass/fail logic:
 
 - **`should_be_absent`** + found in contract → **Fail**
 - **`should_be_absent`** + not found → **Pass**
@@ -71,9 +56,7 @@ Each entry has an `expected_finding` that determines pass/fail logic:
 - **`should_be_present`** + not found → **Fail**
 - Partially addressed or ambiguous → **Review**
 
-The entry's `instruction_md` tells you what to scan for. The `order_form_template_md` provides ready-made language to fix failures.
-
-If they want a customized playbook, point them to the **Generate Playbook** skill.
+The entry's `instruction_md` tells you what to scan for. The `suggested_language_md` provides ready-made language to fix failures.
 
 ## The review process
 
@@ -87,7 +70,7 @@ Read the entire contract before starting the entry-by-entry review. You need the
 
 ### Handling URL-referenced terms
 
-Many SaaS contracts incorporate terms by reference to external URLs (DPAs, SLAs, AUPs, etc.). When reviewing:
+Some contracts incorporate terms by reference to external URLs (DPAs, SLAs, AUPs, policies, etc.). When reviewing:
 
 1. **Note which provisions are URL-referenced** — flag them in the report so the reviewer knows where to find the actual terms.
 2. **If the URL content is accessible** (e.g., publicly available DPA or SLA), fetch and review it as part of the contract.
@@ -109,15 +92,15 @@ For each entry in the playbook, produce:
 **Rationale:**
 [What the contract actually says, with direct quotes from the relevant sections. Cite the section number and document. Explain why this passes, fails, or needs review against the playbook criteria. 3-6 sentences.]
 
-**Order form language:**
-[If result is Fail or Review: start with the playbook entry's `order_form_template_md` and tailor it to the specific contract — reference the vendor's actual clause numbers and defined terms. This should be language a lawyer can paste into an order form addendum or redline. If the result is Pass, write "None needed."]
+**Suggested language:**
+[If result is Fail or Review: start with the playbook entry's `suggested_language_md` and tailor it to the specific contract — reference the actual clause numbers and defined terms. This should be language a lawyer can paste into a redline or addendum. If the result is Pass, write "None needed."]
 ```
 
 ### Assessment guidelines
 
 **Pass** means: The contract meets the playbook's pass criteria. The provision exists, is adequate, and doesn't require modification.
 
-**Fail** means: The contract clearly violates the playbook's fail criteria. The provision is missing, inadequate, or actively harmful. Order form language is needed to fix it.
+**Fail** means: The contract clearly violates the playbook's fail criteria. The provision is missing, inadequate, or actively harmful. Suggested redline language is needed to fix it.
 
 **Review** means: The contract partially addresses the issue, the language is ambiguous, or there's a conflict between documents. A human needs to make the judgment call. Explain what's ambiguous and what the reviewer should focus on.
 
@@ -145,12 +128,12 @@ Many of the most important findings are about what's *not* in the contract. When
 After all entries are reviewed, produce a summary at the top of the report:
 
 ```markdown
-# Vendor Contract Review: [Vendor Name]
+# Contract Review: [Counterparty Name]
 
 **Date:** [date]
 **Reviewed by:** AI-assisted review (review with legal counsel before acting)
 **Contract:** [document name/description]
-**Playbook:** [playbook name or "Standard 18-category playbook"]
+**Playbook:** [playbook name or "General risk review"]
 
 ## Summary
 
@@ -173,16 +156,16 @@ After all entries are reviewed, produce a summary at the top of the report:
 
 ## Step 4: Save and share
 
-Save the report as `[vendor-name]-review.md`. (The playbook itself is a .docx for sharing with the team, but review reports are markdown for readability and tool interoperability.)
+Save the report as `[counterparty-name]-review.md`. (The playbook itself is a .docx for sharing with the team, but review reports are markdown for readability and tool interoperability.)
 
 Let the user know:
 - This is an AI-assisted analysis, not legal advice — they should review the findings with counsel
-- The suggested order form language is draft and may need adjustment for their specific deal
+- The suggested language is draft and may need adjustment for their specific deal
 - If they want to track renewal dates and post-signature obligations, the **Renewal Tracker** skill handles that
 
 ## Common pitfalls to avoid
 
 - **Don't hallucinate contract language.** If you can't find a provision, say it's absent. Never invent quotes.
-- **Don't assume the order form exists.** Some reviews are of the MSA/ToS alone, before an order form is drafted.
-- **Don't skip "Anything Else Unusual."** This catch-all entry is where you flag non-compete clauses, forced arbitration, class-action waivers, venue selection, governing law issues, or anything else a reasonable lawyer would flag.
+- **Don't assume supplemental documents exist.** Some reviews are of a standalone agreement — there may be no order form, addendum, or side letter to reference.
+- **Always flag unusual provisions.** Even if not in the playbook, flag non-compete clauses, forced arbitration, class-action waivers, unusual venue selection, or anything else a reasonable lawyer would want to know about.
 - **Don't soften failures.** If a provision fails the playbook criteria, mark it Fail. Don't hedge with Review to avoid seeming harsh.

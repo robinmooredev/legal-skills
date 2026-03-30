@@ -1,23 +1,24 @@
 ---
 name: optimal-playbook-format
 description: >
-  Reference template for structuring a vendor contract review playbook. The playbook
+  Reference template for structuring a contract review playbook. The playbook
   is a Word document (.docx) that a legal team can use as a living reference for
-  reviewing vendor contracts. Use this skill whenever the user asks about playbook
-  format, wants to structure their existing playbook, mentions "playbook template",
-  or asks how to organize contract review criteria. Also trigger when the user says
-  things like "what should a playbook look like", "format my playbook", "playbook
-  structure", or wants to make their review criteria into a document they can share
-  with their team.
+  reviewing contracts — vendor agreements, NDAs, contractor agreements, customer
+  contracts, or any other agreement type. Use this skill whenever the user asks
+  about playbook format, wants to structure their existing playbook, mentions
+  "playbook template", or asks how to organize contract review criteria. Also
+  trigger when the user says things like "what should a playbook look like",
+  "format my playbook", "playbook structure", or wants to make their review
+  criteria into a document they can share with their team.
 ---
 
 # Optimal Playbook Format
 
-This skill defines the structure for a vendor contract review playbook. The playbook is a **Word document** (.docx) that a legal team keeps as a living reference — it defines what to look for in vendor contracts, what's acceptable, what's not, and what language to use when pushing back.
+This skill defines the structure for a contract review playbook. The playbook is a **Word document** (.docx) that a legal team keeps as a living reference — it defines what to look for in contracts, what's acceptable, what's not, and what language to use when pushing back. It works for any contract type: vendor agreements, NDAs, contractor agreements, customer contracts, partnership agreements, and more.
 
 The format is designed so it works seamlessly with the **Review Contract with Playbook** skill, but the output is a document you can hand to a new hire or outside counsel.
 
-A sample playbook is included at `templates/sample-playbook.md` — use it as a reference for structure and content. It contains 3 example entries (Auto Renewal, Vendor AI Training, Data Deletion) across different categories.
+A sample playbook is included at `templates/sample-playbook.md` — use it as a reference for structure and content. It contains 3 example entries across different contract types: Auto Renewal (vendor), Non-Solicitation (NDA), and IP Assignment (contractor).
 
 ## When to use this
 
@@ -31,44 +32,44 @@ A sample playbook is included at `templates/sample-playbook.md` — use it as a 
 Each playbook entry has five fields:
 
 ### `title`
-Short, scannable name for the entry. Examples: "Auto Renewal", "Liability Cap Adequacy", "Use of Customer Data for AI Training". This is the heading a reviewer scans in a table of contents.
+Short, scannable name for the entry. Examples: "Auto Renewal", "Non-Solicitation Scope", "IP Assignment", "Liability Cap Adequacy". This is the heading a reviewer scans in a table of contents.
 
 ### `key`
-A machine-readable slug for the entry (e.g., `auto_renewal`, `vendor_ai_training`). Used for cross-referencing between skills. In the Word document, this appears as a small annotation below the title — the user doesn't need to care about it, but it keeps the playbook interoperable with the Review Contract skill.
+A machine-readable slug for the entry (e.g., `auto_renewal`, `non_solicitation`, `ip_assignment`). Used for cross-referencing between skills. In the Word document, this appears as a small annotation below the title — the user doesn't need to care about it, but it keeps the playbook interoperable with the Review Contract skill.
 
 ### `expected_finding`
 One of two values:
 
-- **`should_be_absent`** — The contract should NOT contain this provision. If found, it fails. Examples: auto-renewal, unilateral modification rights, uncapped price escalation, broad data-use grants, vendor AI training rights.
-- **`should_be_present`** — The contract SHOULD contain this provision. If missing, it fails. Examples: data deletion obligations, IP indemnification, security standards, uptime SLA, subprocessor controls.
+- **`should_be_absent`** — The contract should NOT contain this provision. If found, it fails. Examples: non-compete clauses in an NDA, uncapped price escalation in a vendor agreement, overly broad IP assignment in a contractor agreement.
+- **`should_be_present`** — The contract SHOULD contain this provision. If missing, it fails. Examples: mutual confidentiality obligations in an NDA, data deletion obligations in a vendor agreement, work-for-hire provisions in a contractor agreement.
 
 This single field replaces separate "pass criteria" and "fail criteria" — the logic is cleaner. If the expected finding is `should_be_absent` and the provision is found, that's a fail. If it's `should_be_present` and the provision is missing, that's a fail. Everything else is either a pass or needs human review.
 
 ### `instruction_md`
-The reviewer instruction — what to look for when reading the contract. Written as if explaining to a smart non-lawyer what to scan for. Should answer: "If I'm reading a 40-page MSA, what am I scanning for and where does it usually hide?"
+The reviewer instruction — what to look for when reading the contract. Written as if explaining to a smart non-lawyer what to scan for. Should answer: "If I'm reading this contract, what am I scanning for and where does it usually hide?"
 
-Good instruction: "Check whether the vendor reserves the right to use customer data (or derivatives like anonymized/aggregated data) to train machine learning or AI models. This is often buried in the data use or license grant sections, sometimes framed as 'service improvement.' Also check the DPA and privacy policy for conflicting language."
+Good instruction: "Check whether the NDA includes a non-solicitation clause that restricts hiring the other party's employees. These are sometimes buried in the 'Additional Obligations' or 'Restrictive Covenants' section and may extend well beyond the confidentiality term."
 
-Bad instruction: "Review the data use provisions."
+Bad instruction: "Review the restrictive covenants."
 
-### `order_form_template_md`
-Draft contract language that fixes a failing provision. This is actual language a lawyer can paste into an order form addendum or redline — not a summary of what the language should say.
+### `suggested_language_md`
+Draft contract language that fixes a failing provision. This is actual language a lawyer can paste into a redline or addendum — not a summary of what the language should say.
 
-Good: "Notwithstanding anything to the contrary in the Agreement, Vendor shall not use Customer Data, including anonymized or aggregated derivatives thereof, for the purpose of training machine learning or artificial intelligence models."
+Good: "Nothing in this Agreement shall restrict either party from soliciting, hiring, or engaging any employee or contractor of the other party."
 
-Bad: "Add language prohibiting AI training on customer data."
+Bad: "Remove the non-solicitation clause."
 
 ## Document structure
 
 The playbook is a Word document with this structure:
 
 ```
-[Company Name] Vendor Contract Review Playbook
-================================================
+[Company Name] Contract Review Playbook
+=======================================
 
 Version: [number]
 Last updated: [date]
-Document type: [MSA | DPA | both]
+Contract types covered: [e.g., vendor agreements, NDAs, contractor agreements]
 
 Introduction
 ------------
@@ -86,8 +87,8 @@ Expected: [should_be_absent | should_be_present]
 What to look for:
 [instruction_md content]
 
-Order form language:
-[order_form_template_md content]
+Suggested language:
+[suggested_language_md content]
 
 ---
 
@@ -102,24 +103,18 @@ Order form language:
 
 Use the **docx** skill to produce the Word document — proper heading styles, a table of contents, and clean formatting so it looks professional when printed or shared.
 
-### Categories
+### Grouping entries
 
-Entries are grouped into categories. The standard categories are:
+Group entries into logical categories that make sense for the team's priorities. Common groupings include things like term and renewal, data and privacy, liability, security — but the categories should emerge from the team's actual concerns, not from a fixed template. A healthcare company's playbook will look different from a fintech company's.
 
-1. **Term & Renewal** — Auto-renewal, termination for convenience, price escalation at renewal
-2. **Contract Governance** — Unilateral modification rights, MSA vs. order form precedence, catch-all unusual provisions
-3. **Data Protection & Privacy** — DPA/regulatory compliance, permitted data use scope, vendor AI training on customer data, anonymized/aggregated data use
-4. **Data Lifecycle** — Subprocessor controls, customer data export rights, data deletion obligations
-5. **Security & Availability** — Security standards, uptime SLA and service credits
-6. **Liability & IP** — Liability cap adequacy, IP infringement indemnification
-7. **Commercial Terms** — Customer logo/trademark use
+The groupings are for readability and to make it easier to assign review sections to different team members. Keep them flexible — if an entry doesn't fit neatly, create a new group or reorganize.
 
-These categories organize the playbook for readability and make it easier to assign review sections to different team members. If the user's entries don't fit neatly into these categories, adapt — the categories serve the entries, not the other way around.
+## Example entries
 
-## Example entry
+A vendor agreement entry:
 
 ```
-## Data Protection & Privacy
+## Data & Privacy
 
 Use of Customer Data for AI Training
 key: vendor_ai_training
@@ -132,74 +127,44 @@ or AI models. This is often buried in the data use or license grant
 sections, sometimes framed as "service improvement." Also check the
 DPA and privacy policy for conflicting language.
 
-Order form language:
+Suggested language:
 "Notwithstanding anything to the contrary in the Agreement, Vendor
 shall not use Customer Data, including anonymized or aggregated
 derivatives thereof, for the purpose of training, improving, or
-developing machine learning or artificial intelligence models. For
-the avoidance of doubt, 'service improvement' as used in the
-Agreement does not include training or development of AI/ML models
-on Customer Data."
+developing machine learning or artificial intelligence models."
 ```
 
-## The 18 standard entries
+An NDA entry:
 
-These are the standard entries organized by category. A complete playbook doesn't need all of them, and can include entries beyond them — but this is a useful reference for what a mature playbook covers:
+```
+## Scope & Restrictions
 
-### Term & Renewal
+Non-Solicitation
+key: non_solicitation
+Expected: should_be_absent
 
-| Key | Title | Expected |
-|-----|-------|----------|
-| `auto_renewal` | Auto Renewal | should_be_absent |
-| `uncapped_price` | Price escalation | should_be_absent |
-| `termination_for_convenience` | Termination for convenience | should_be_present |
+What to look for:
+Check whether the NDA includes a non-solicitation or non-hire clause
+that restricts either party from soliciting or hiring the other's
+employees. These are sometimes buried in "Additional Obligations" or
+"Restrictive Covenants" and may extend beyond the confidentiality term.
+Non-solicitation in a pre-sales NDA is unusual and disproportionate.
 
-### Contract Governance
+Suggested language:
+"Nothing in this Agreement shall restrict either party from soliciting,
+hiring, or engaging any employee or contractor of the other party."
+```
 
-| Key | Title | Expected |
-|-----|-------|----------|
-| `unilateral_modification_rights` | Unilateral contract modifications | should_be_absent |
-| `msa_precedence_over_order_form` | MSA precedence over order form | should_be_absent |
-| `miscellaneous_weird` | Anything else unusual | should_be_absent |
+## Building your entries
 
-### Data Protection & Privacy
+Every team's playbook will be different. The entries should reflect what *your* team actually cares about based on your industry, risk tolerance, deal size, and regulatory environment. For example:
 
-| Key | Title | Expected |
-|-----|-------|----------|
-| `no_dpa_or_compliance` | Data protection addendum / regulatory compliance | should_be_present |
-| `selling_data_use_rights` | Permitted data use scope | should_be_absent |
-| `vendor_ai_training` | Use of customer data for AI training | should_be_absent |
-| `vendor_data_aggregation` | Use of anonymized or aggregated data | should_be_absent |
+**Vendor agreements** — auto-renewal, price escalation, data use and deletion, liability caps, SLA commitments, unilateral modification rights
+**NDAs** — mutuality, non-solicitation, governing law, indemnification, definition scope, term length
+**Contractor agreements** — IP assignment, work-for-hire provisions, non-compete scope, termination notice, insurance requirements
+**Customer contracts** — limitation of liability, warranty disclaimers, payment terms, SLA commitments
 
-### Data Lifecycle
-
-| Key | Title | Expected |
-|-----|-------|----------|
-| `no_subprocessor_controls` | Subprocessor controls | should_be_present |
-| `no_data_export_rights` | Customer data export rights | should_be_present |
-| `no_data_deletion_guarantee` | Data deletion obligations | should_be_present |
-
-### Security & Availability
-
-| Key | Title | Expected |
-|-----|-------|----------|
-| `no_security_standards` | Security standards | should_be_present |
-| `no_sla_or_uptime` | Uptime SLA and service credits | should_be_present |
-
-### Liability & IP
-
-| Key | Title | Expected |
-|-----|-------|----------|
-| `liability_cap_too_low` | Liability cap adequacy | should_be_absent |
-| `no_ip_indemnification` | IP infringement indemnification | should_be_present |
-
-### Commercial Terms
-
-| Key | Title | Expected |
-|-----|-------|----------|
-| `vendor_logo_use_rights` | Customer logo / trademark use | should_be_absent |
-
-Not every company needs all of these. A seed-stage startup buying a $500/month tool probably cares about auto-renewal, price escalation, and MSA precedence. A Series C company processing PHI needs the full set. The **Generate Playbook** skill helps figure out which entries matter by analyzing the team's actual redlines.
+But these are just examples — your playbook might have 5 entries or 50, and the categories will depend on what your team actually negotiates. The **Generate Playbook** skill can help figure out which entries matter by analyzing your team's actual redlines from past negotiations.
 
 ## Tips for converting an existing playbook
 
@@ -207,5 +172,5 @@ If the user already has review criteria (in a spreadsheet, in someone's head, in
 
 1. For each criterion, determine the `expected_finding` — is this something that should be in the contract, or something that shouldn't?
 2. Sharpen vague instructions into specific `instruction_md` — tell the reviewer where to look and what language to watch for
-3. Write real `order_form_template_md` for every entry — actual contract language, not summaries
+3. Write real `suggested_language_md` for every entry — actual contract language, not summaries
 4. Flag gaps — entries they're missing that are common for their industry/stage
