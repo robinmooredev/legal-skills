@@ -152,6 +152,9 @@ After all entries are reviewed, produce a summary at the top of the report:
 ---
 
 [Full entry-by-entry results follow below]
+
+---
+*This analysis is a starting point, not legal advice. Have counsel review before making decisions based on these findings.*
 ```
 
 ## Step 4: Save and share

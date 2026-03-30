@@ -141,6 +141,7 @@ Generate a comprehensive report with these sections:
 | 8 | **How I Would Handle This Vendor** | Specific, actionable negotiation advice |
 | 9 | **Draft Email to Vendor** | Ready-to-send email requesting changes |
 | 10 | **Proposed Order Form Language** | Contract clauses to paste into an order form |
+| 11 | **Disclaimer** | "This analysis is a starting point, not legal advice. Have counsel review before making decisions based on these findings." |
 
 #### Score Definitions
 

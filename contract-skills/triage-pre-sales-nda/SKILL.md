@@ -98,6 +98,9 @@ An NDA should not contain an indemnification obligation. Indemnity in an NDA is 
 ## Notes
 
 [Anything else worth mentioning — unusual term length, overly broad definition of confidential information, non-standard exclusions, etc. Keep it brief. If nothing stands out beyond the three checks, say "Nothing else notable."]
+
+---
+*This analysis is a starting point, not legal advice. Have counsel review before making decisions based on these findings.*
 ```
 
 ## Tone
