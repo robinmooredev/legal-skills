@@ -166,6 +166,54 @@ Every team's playbook will be different. The entries should reflect what *your* 
 
 But these are just examples — your playbook might have 5 entries or 50, and the categories will depend on what your team actually negotiates. The **Generate Playbook** skill can help figure out which entries matter by analyzing your team's actual redlines from past negotiations.
 
+## Accepted Positions section
+
+After the main playbook entries, the playbook includes an **Accepted Positions** section. These are provisions that commonly appear in contracts and that other reviewers or AI tools would typically flag, but that your team has decided are acceptable. They tell the reviewer (and the Review Contract skill): "we know about this — don't waste time on it."
+
+Each accepted position is a lightweight entry with three fields:
+
+### `title`
+Short name, same as a regular entry. Examples: "Price Escalation", "Arbitration Clauses", "Non-Exclusive License Grant".
+
+### `key`
+Machine-readable slug, same format as regular entries (e.g., `price_escalation`, `arbitration`).
+
+### `rationale`
+One to three sentences explaining why this is acceptable to your team. This is the most important field — it documents the reasoning so a new hire or outside counsel understands the decision, not just the conclusion. Include any conditions or thresholds.
+
+Good: "We accept annual price increases up to 5%. Above 5% escalation or uncapped escalation should be flagged."
+Good: "Acceptable for deals under $500K. For larger deals, escalate to senior counsel."
+Bad: "Fine."
+
+### Document structure
+
+```
+## Accepted Positions
+
+These provisions commonly appear in contracts and may be flagged by
+other reviewers or AI tools, but [Company Name] has determined they
+are acceptable under the conditions noted. Do not flag these during
+review unless the stated conditions are exceeded.
+
+### [Title]
+key: [entry_key]
+
+[Rationale — why this is acceptable, including any conditions or thresholds]
+
+---
+
+### [Next Title]
+...
+```
+
+### How the Review Contract skill uses this
+
+When reviewing a contract against a playbook that includes Accepted Positions, the review skill should:
+- **Not flag** accepted positions as failures
+- **Suppress** them from the main findings unless a stated condition is exceeded (e.g., escalation above the accepted threshold)
+- **List them** in a brief "Accepted Positions" note at the end of the report, so the reviewer can confirm the team's stance still holds for this deal
+- **Flag a warning** if the contract's version of an accepted position exceeds the stated conditions (e.g., "Price escalation is 8%, which exceeds your accepted threshold of 5%")
+
 ## Tips for converting an existing playbook
 
 If the user already has review criteria (in a spreadsheet, in someone's head, in scattered notes), help them restructure:

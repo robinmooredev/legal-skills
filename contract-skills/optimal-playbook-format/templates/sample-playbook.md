@@ -52,3 +52,31 @@ Confirm the agreement includes a clear assignment of all intellectual property c
 
 **Suggested language:**
 "Contractor hereby irrevocably assigns to Company all right, title, and interest in and to all Work Product, including all intellectual property rights therein. 'Work Product' means all inventions, works of authorship, designs, code, and other materials created by Contractor in the course of performing services under this Agreement. Contractor retains all rights to Contractor's pre-existing intellectual property, and grants Company a non-exclusive, perpetual license to use such pre-existing IP solely as incorporated in the Work Product."
+
+---
+
+## Accepted Positions
+
+These provisions commonly appear in contracts and may be flagged by other reviewers or AI tools, but [Company Name] has determined they are acceptable under the conditions noted. Do not flag these during review unless the stated conditions are exceeded.
+
+### Price Escalation
+
+**key:** `price_escalation`
+
+We accept annual price increases up to 5%. This is standard in our vendor contracts and not worth negotiating. Flag only if escalation exceeds 5% annually or is uncapped.
+
+---
+
+### Arbitration Clauses
+
+**key:** `arbitration`
+
+Acceptable for deals under $500K. For deals at or above $500K, escalate to senior counsel — we prefer litigation rights on larger engagements.
+
+---
+
+### Non-Exclusive License Grant
+
+**key:** `non_exclusive_license`
+
+Vendor's grant of a non-exclusive license to use the service is standard and expected. Do not flag non-exclusive grants as a concern — exclusivity is not something we seek in vendor agreements.

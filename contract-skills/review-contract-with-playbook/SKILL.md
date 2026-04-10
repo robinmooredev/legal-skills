@@ -58,6 +58,15 @@ Each playbook entry has an `expected_finding` that determines pass/fail logic:
 
 The entry's `instruction_md` tells you what to scan for. The `suggested_language_md` provides ready-made language to fix failures.
 
+### Accepted Positions
+
+The playbook may also include an **Accepted Positions** section — provisions the team has decided are acceptable and should not be flagged. Each accepted position has a `rationale` that may include conditions or thresholds (e.g., "acceptable up to 5%", "acceptable for deals under $500K").
+
+When reviewing:
+- **Do not flag** accepted positions as failures in the main results
+- **Do flag a warning** if the contract's version exceeds a stated condition (e.g., price escalation is 8% but the accepted threshold is 5%) — report this as a 🟡 Review with a note explaining the threshold breach
+- **List** accepted positions in a brief section at the end of the report so the reviewer can confirm the team's stance still holds for this deal
+
 ## The review process
 
 ### Step 1: Read the full contract
@@ -152,6 +161,19 @@ After all entries are reviewed, produce a summary at the top of the report:
 ---
 
 [Full entry-by-entry results follow below]
+
+---
+
+## Accepted Positions
+
+The following provisions were found in the contract and are accepted
+per your playbook. Listed here for confirmation — no action needed
+unless your team's position has changed for this deal.
+
+| Position | Status |
+|----------|--------|
+| [Title] | Accepted — [brief note, e.g., "3% escalation, within 5% threshold"] |
+| [Title] | ⚠️ Exceeds threshold — [e.g., "8% escalation, accepted limit is 5%"] |
 
 ---
 *This analysis is a starting point, not legal advice. Have counsel review before making decisions based on these findings.*
