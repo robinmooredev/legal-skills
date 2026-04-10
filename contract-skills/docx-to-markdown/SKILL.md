@@ -1,24 +1,24 @@
 ---
-name: redline-to-markdown
+name: docx-to-markdown
 description: >
-  Convert a redlined Word document (.docx with tracked changes) into clean markdown
-  with ins, del, and comment XML tags showing where proposed changes and reviewer
-  comments are. Use this skill whenever the user uploads a .docx file with tracked
-  changes, mentions "redline", "tracked changes", "markup", "comments", or wants to
-  see what changed in a contract or legal document — even if they just say something
-  like "show me the changes in this doc" or "what did they change in the contract".
-  Also trigger when the user wants to convert a redlined document for review, diff a
-  contract, extract proposed edits from a Word file, or see reviewer comments
-  alongside changes.
+  Convert a Word document (.docx) into clean markdown. Handles both regular documents
+  and redlined documents with tracked changes — insertions and deletions are marked
+  with ins, del, and comment XML tags. Use this skill whenever the user uploads a
+  .docx file, mentions "redline", "tracked changes", "markup", "comments", "convert
+  to markdown", or wants to see the contents or changes in a Word document — even if
+  they just say something like "show me what's in this doc" or "what did they change
+  in the contract". Also trigger when the user wants to convert a Word document for
+  review, diff a contract, extract proposed edits from a Word file, or see reviewer
+  comments alongside changes.
 ---
 
-# Redline to Markdown
+# DOCX to Markdown
 
-This skill converts Word documents containing tracked changes (redlines) into
-readable markdown where insertions and deletions are marked with `<ins>` and `<del>`
-XML tags, and reviewer comments are captured as `<comment>` tags. This is useful for
-legal contract review, collaborative editing review, or any workflow where you need
-tracked changes and the reasoning behind them in a plain-text format that's easy to
+This skill converts Word documents (.docx) into readable markdown. For documents
+containing tracked changes (redlines), insertions and deletions are marked with
+`<ins>` and `<del>` XML tags, and reviewer comments are captured as `<comment>` tags.
+This is useful for legal contract review, collaborative editing review, or any
+workflow where you need Word document content in a plain-text format that's easy to
 read, search, and pipe into other tools.
 
 ## Prerequisites

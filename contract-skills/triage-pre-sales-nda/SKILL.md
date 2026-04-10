@@ -23,19 +23,19 @@ A prospect sends you an NDA before a sales call. You need to know in 30 seconds 
 
 An NDA — .docx, markdown, or pasted text. One file.
 
-If the user uploads a .docx, convert it to markdown first. If the **redline-to-markdown** skill is installed, use it:
+If the user uploads a .docx, convert it to markdown first. If the **docx-to-markdown** skill is installed, use it:
 
 ```bash
-python3 <redline-to-markdown-skill-path>/scripts/convert_spans.py "<input_file>"
+python3 <docx-to-markdown-skill-path>/scripts/convert_spans.py "<input_file>"
 ```
 
-If redline-to-markdown is not installed, use pandoc directly:
+If docx-to-markdown is not installed, use pandoc directly:
 
 ```bash
 pandoc "<input_file>" -f docx -t gfm --wrap=none
 ```
 
-**Note:** The redline-to-markdown skill is recommended — install it from prevend.ai/skills if you don't have it.
+**Note:** The docx-to-markdown skill is recommended — install it from prevend.ai/skills if you don't have it.
 
 **Before starting the review**, ask the user: "What governing law and venue does your company prefer for NDAs? (e.g., Delaware law, New York County venue)" Use their answer for Check #2. If they've provided this in a prior conversation or playbook, use that instead of asking again.
 

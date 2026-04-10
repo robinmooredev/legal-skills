@@ -40,10 +40,10 @@ For each .docx file, extract the tracked changes using pandoc:
 pandoc "<input_file>" -f docx -t gfm --track-changes=all --wrap=none
 ```
 
-This produces markdown with HTML spans marking insertions, deletions, and comments. If the **redline-to-markdown** skill is available, use its `scripts/convert_spans.py` post-processing script to convert those spans into clean `<ins>`, `<del>`, and `<comment>` tags — it's more readable and easier to analyze:
+This produces markdown with HTML spans marking insertions, deletions, and comments. If the **docx-to-markdown** skill is available, use its `scripts/convert_spans.py` post-processing script to convert those spans into clean `<ins>`, `<del>`, and `<comment>` tags — it's more readable and easier to analyze:
 
 ```bash
-python3 <redline-to-markdown-skill-path>/scripts/convert_spans.py "<input_file>"
+python3 <docx-to-markdown-skill-path>/scripts/convert_spans.py "<input_file>"
 ```
 
 Do this for every file in the folder. Keep track of which changes came from which contract — you'll want to know whether a pattern shows up in 2 contracts or 10.
